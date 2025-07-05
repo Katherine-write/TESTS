@@ -21,7 +21,8 @@ data class Post(
     val date: Long,
     val replyOwnerId: Int = 0,
     val replies: Int,
-    val canPost: Boolean
+    val canPost: Boolean,
+    val reposts: Int
 )
 
 object WallService {
@@ -84,7 +85,6 @@ object WallService {
 
     fun clear() {
         posts = emptyArray()
-        val postId: Int = 0
         nextId = 1
     }
 }
@@ -100,7 +100,8 @@ fun main() {
         comments = 0,
         date = System.currentTimeMillis(),
         replies = 0,
-        canPost = true
+        canPost = true,
+        reposts = 0
     )
 
     val liked = post.copy(likes = post.likes + 1)
