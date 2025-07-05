@@ -6,6 +6,11 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
+data class Repost(
+    val repostCount: Int = 0,
+    val userReposted: Boolean = false
+)
+
 data class Post(
     val postId: Int = 0,
     val authorId: Int,
@@ -50,6 +55,7 @@ object WallService {
     }
 
     fun commentedById(id: Int) {
+
         for ((index, post) in posts.withIndex()) {
             if (post.postId == id) {
                 posts[index] = post.copy(comments = post.comments + 1)
@@ -75,11 +81,14 @@ object WallService {
         return false
     }
 
+
     fun clear() {
         posts = emptyArray()
         val postId: Int = 0
+        nextId = 1
     }
 }
+
 
 
 fun main() {
