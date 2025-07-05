@@ -22,7 +22,7 @@ data class Post(
     val replyOwnerId: Int = 0,
     val replies: Int,
     val canPost: Boolean,
-    val reposts: Int
+    val reposts: Repost
 )
 
 object WallService {
@@ -101,7 +101,7 @@ fun main() {
         date = System.currentTimeMillis(),
         replies = 0,
         canPost = true,
-        reposts = 0
+        reposts = Repost(1, true)
     )
 
     val liked = post.copy(likes = post.likes + 1)
