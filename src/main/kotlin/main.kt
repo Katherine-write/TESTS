@@ -6,23 +6,20 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
-data class Repost(
-    val repostCount: Int = 0,
-    val userReposted: Boolean = false
-)
 
 data class Post(
     val postId: Int = 0,
     val authorId: Int,
     val authorName: String,
     val content: String,
-    val likes: Int,
+    var likes: Int,
     val comments: Int,
     val date: Long,
-    val replyOwnerId: Int = 0,
-    val replies: Int,
+    val replyOwnerId: Int?,
+    val replies: Int = 0,
+    val original: Post?,
     val canPost: Boolean,
-    val reposts: Repost
+    val attachments: Array<Attachments> = emptyArray()
 )
 
 object WallService {
@@ -33,6 +30,19 @@ object WallService {
         posts += post.copy(postId = nextId++)
         return posts.last()
 
+    }
+
+    fun addRepost(repost: Post) {
+
+        val newRepost = repost.copy(
+            postId = nextId++,
+            likes = 0,
+            comments = 0,
+            replies = 0,
+            replyOwnerId = null
+        )
+
+        posts += newRepost
     }
 
 
@@ -48,6 +58,7 @@ object WallService {
 
 
     fun likeById(id: Int) {
+
         for ((index, post) in posts.withIndex()) {
             if (post.postId == id) {
                 posts[index] = post.copy(likes = post.likes + 1)
@@ -90,26 +101,84 @@ object WallService {
 }
 
 
-
 fun main() {
-    val post = Post(
-        authorId = 1,
-        authorName = "author",
-        content = "content",
-        likes = 0,
-        comments = 0,
-        date = System.currentTimeMillis(),
-        replies = 0,
-        canPost = true,
-        reposts = Repost(1, true)
+    val photo = Photo(
+        id = 100,
+        authorId = 15,
+        authorName = "nobodyKnows",
+        comments = 100,
+        likes = 1500
     )
 
-    val liked = post.copy(likes = post.likes + 1)
-    val commented = post.copy(comments = post.comments + 1)
-    println(liked)
-    WallService.publicationTime(post.date)
+    val audio = Audio(
+        id = 146,
+        authorId = 1434,
+        authorName = "it",
+        duration = 2,
+        comments = 3,
+        likes = 15
+    )
 
-    val (postId, authorId, _, content) = post
-    println("$postId, $authorId, $content")
+    val doc = Doc(
+        id = 3465,
+        authorId = 1242,
+        authorName = "anotherAuthor"
+    )
+    val link = Link(
+        url = "https://images.squarespace-cdn.com/content/v1/62da63f9ec4d5d07d12a1056/dbcc69f8-1a3c-4dfc-bf84-7ce128c566ac/20210823143248_IMG_4007a.jpg"
+    )
 
+    val video = Video(
+        id = 100,
+        authorId = 15,
+        authorName = "nobodyKnows",
+        comments = 100,
+        duration = 3,
+        likes = 1500
+    )
+
+    val photoAttachment = PhotoAttachment("photo", photo)
+    val audioAttachment = AudioAttachment("audio", audio)
+
+    val post = Post(
+        postId = 1,
+        authorId = 1,
+        authorName = "me",
+        content = "original content",
+        likes = 15,
+        comments = 3,
+        date = System.currentTimeMillis(),
+        replyOwnerId = null,
+        replies = 0,
+        original = null,
+        canPost = true,
+        attachments = arrayOf(photoAttachment, audioAttachment)
+    )
+    val repost = Post(
+        postId = 2,
+        authorId = 2,
+        authorName = "he",
+        content = "original content",
+        likes = 5,
+        comments = 3,
+        date = System.currentTimeMillis(),
+        replyOwnerId = null,
+        replies = 0,
+        original = post,
+        canPost = true,
+        attachments = post.attachments
+    )
+    val array = arrayOf(post, repost)
+    var likesSum = 0
+    for (item in array) {
+        likesSum += (item.likes + (item.original?.likes ?: 0))
+    }
+    println(likesSum)
+
+    val replArray = arrayOf(post, repost)
+    var replSum = 0
+    for (item in replArray) {
+        replSum += (item.replies + (item.original?.replies ?: 0))
+    }
+    println(replSum)
 }

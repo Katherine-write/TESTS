@@ -19,6 +19,7 @@ class WallServiceTest {
             date = System.currentTimeMillis(),
             replyOwnerId = 0,
             replies = 0,
+            original = null,
             canPost = true
         )
 
@@ -43,6 +44,7 @@ class WallServiceTest {
             date = System.currentTimeMillis(),
             replyOwnerId = 0,
             replies = 0,
+            original = null,
             canPost = true
         )
 
@@ -69,6 +71,7 @@ class WallServiceTest {
             date = System.currentTimeMillis(),
             replyOwnerId = 0,
             replies = 0,
+            original = null,
             canPost = true
         )
 
