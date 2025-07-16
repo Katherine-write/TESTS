@@ -190,5 +190,5 @@ fun main() {
     WallService.add(repost)
     val comment = Comment(2, "cool")
 
-    WallService.createComment(2,comment)
+    WallService.createComment(999,comment)
 }

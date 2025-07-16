@@ -92,20 +92,41 @@ class WallServiceTest {
     fun shouldThrow() {
 
         val post = Post(
-                postId = 999,
-                authorId = 1,
-                authorName = "Test",
-                content = "Test",
-                likes = 0,
-                date = System.currentTimeMillis(),
-                replyOwnerId = null,
-                replies = 0,
-                original = null,
-                canPost = true
-            )
+            postId = 999,
+            authorId = 1,
+            authorName = "Test",
+            content = "Test",
+            likes = 0,
+            date = System.currentTimeMillis(),
+            replyOwnerId = null,
+            replies = 0,
+            original = null,
+            canPost = true
+        )
         WallService.add(post)
         val comment = Comment(2, "cool")
 
-        WallService.createComment(1,comment)
+        WallService.createComment(3,comment)
+    }
+
+    @Test
+    fun willDo() {
+
+        val post = Post(
+            authorId = 1,
+            authorName = "Test",
+            content = "Test",
+            likes = 0,
+            date = System.currentTimeMillis(),
+            replyOwnerId = null,
+            replies = 0,
+            original = null,
+            canPost = true
+        )
+        WallService.add(post)
+        val comment = Comment(2, "cool")
+
+        val result = WallService.createComment(1,comment)
+        assertEquals(comment, result)
     }
 }
