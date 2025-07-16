@@ -6,24 +6,30 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.*
 
-
+class PostNotFoundException(message: String) : RuntimeException(message)
+class Comment(
+    val authorId: Int,
+    val comment: String
+)
 data class Post(
     val postId: Int = 0,
     val authorId: Int,
     val authorName: String,
     val content: String,
     var likes: Int,
-    val comments: Int,
     val date: Long,
     val replyOwnerId: Int?,
     val replies: Int = 0,
     val original: Post?,
     val canPost: Boolean,
     val attachments: Array<Attachments> = emptyArray()
-)
+) {
+
+}
 
 object WallService {
     var posts = emptyArray<Post>()
+    private var comments = emptyArray<Comment>()
     private var nextId = 1
 
     fun add(post: Post): Post {
@@ -32,12 +38,21 @@ object WallService {
 
     }
 
+    fun createComment( searchPostId: Int, comment: Comment): Comment {
+        for (post in posts) {
+            if(post.postId == searchPostId){
+                comments += comment
+                return comment
+            }
+        }
+        throw PostNotFoundException("No post with $searchPostId")
+    }
+
     fun addRepost(repost: Post) {
 
         val newRepost = repost.copy(
             postId = nextId++,
             likes = 0,
-            comments = 0,
             replies = 0,
             replyOwnerId = null
         )
@@ -66,14 +81,6 @@ object WallService {
         }
     }
 
-    fun commentedById(id: Int) {
-
-        for ((index, post) in posts.withIndex()) {
-            if (post.postId == id) {
-                posts[index] = post.copy(comments = post.comments + 1)
-            }
-        }
-    }
 
     fun repliedById(id: Int) {
         for ((index, post) in posts.withIndex()) {
@@ -146,7 +153,6 @@ fun main() {
         authorName = "me",
         content = "original content",
         likes = 15,
-        comments = 3,
         date = System.currentTimeMillis(),
         replyOwnerId = null,
         replies = 0,
@@ -160,7 +166,6 @@ fun main() {
         authorName = "he",
         content = "original content",
         likes = 5,
-        comments = 3,
         date = System.currentTimeMillis(),
         replyOwnerId = null,
         replies = 0,
@@ -181,4 +186,9 @@ fun main() {
         replSum += (item.replies + (item.original?.replies ?: 0))
     }
     println(replSum)
+    WallService.add(post)
+    WallService.add(repost)
+    val comment = Comment(2, "cool")
+
+    WallService.createComment(2,comment)
 }
